@@ -15,7 +15,7 @@ if ( ! class_exists('\Dompdf\Dompdf') ) {
         require_once $cc_dompdf_autoload;
     }
 }
-
+// HI!!!!!!!!!!!!!!!!!!!!
 /* Neue Kommentare*/
 /* ========== CPT: catalog_item ========== */
 add_action('init', function () {
