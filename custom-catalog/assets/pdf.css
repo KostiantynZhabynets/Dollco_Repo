@@ -1,0 +1,103 @@
+/* ============================================================
+   PDF-Styles für Merkliste (Dompdf)
+   Alle Kommentare sind auf Deutsch.
+   ============================================================ */
+
+/* --- Basis: Schrift & Farben --- */
+@page{
+  margin: 14mm 8mm 10mm 18mm; /* oben rechts unten links */
+}
+html, body{
+  font-family: "DejaVu Sans", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  color: #111;
+}
+
+/* --- Kopf- und Fußzeile (fixiert) --- */
+.pdf-header{
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 50px; padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+.pdf-footer{
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 30px; padding: 6px 0;
+  border-top: 1px solid #e5e7eb;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; color: #555;
+}
+
+/* Seitenzähler via Counter (Dompdf unterstützt das) */
+.pagenum:before { content: counter(page); }
+.pagetotal:before { content: counter(pages); }
+
+/* --- Header-Inhalt --- */
+.pdf-header__logo img{ height: 34px; }
+.pdf-header__title{ font-weight: 700; font-size: 16px; }
+.pdf-header__site{ color:#6b7280; }
+.pdf-header__date{ color:#6b7280; }
+
+.pdf-header{
+  display: flex; gap: 12px; align-items: center;
+}
+.pdf-header__meta{ display:flex; flex-direction: column; }
+
+/* --- Hauptbereich unterhalb des Headers --- */
+.pdf-main{
+  /* Abstand, weil Header/Fußzeile fixiert sind: */
+  margin-top: 62px;
+  margin-bottom: 38px;
+}
+
+/* --- Produktabschnitte --- */
+.pdf-product{
+  page-break-inside: avoid;
+  margin: 0 0 16px 0;
+}
+.pdf-product__title{
+  font-size: 18px; margin: 0 0 8px 0;
+}
+.cc-pdf-img {
+  max-width: 220px; height: auto; border:1px solid #ddd; border-radius:4px; 
+}
+.pdf-product__link{
+  font-size: 11px; color: #2563eb; margin: 6px 0 10px 0; word-break: break-all;
+}
+
+/* --- Tabelle --- */
+table{
+  width: 100%; border-collapse: collapse; margin: 6px 0 0;
+}
+table th, .pdf-table td{
+  border:1px solid #e5e7eb; padding: 6px 8px; text-align: left; vertical-align: top;
+}
+table thead th{
+  background:#f3f4f6; font-weight:700;
+}
+table tbody tr:nth-child(even){
+  background:#f8fafc;
+}
+
+/* --- Landscape-Optimierungen (optional) ---
+   Kann via Filter cc_wishlist_pdf_paper(['A4','landscape']) aktiviert werden. */
+
+
+body {
+  font-family: DejaVu Sans, Arial, sans-serif; font-size: 13px;
+}
+h1 {
+  font-size: 1.5em; margin-bottom: 1em; 
+}
+      .cc-pdf-item { margin-bottom: 2em; page-break-inside: avoid; }
+      table { border-collapse: collapse; width: 100%; margin-top: 0.5em; }
+      th, td { border: 1px solid #ccc; padding: 6px 10px; }
+      th { background: #f6f6f6; }
+    
+.bump{
+  font-size: 0.6rem;
+}
+
+.cc-pdf-item strong{
+  font-size: 1.2em;
+  font-weight: 800;
+}

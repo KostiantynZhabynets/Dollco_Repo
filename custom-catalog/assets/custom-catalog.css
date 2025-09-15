@@ -1,0 +1,362 @@
+/* ============================================================
+   Custom Catalog – Basis-Styles (überschreibbar)
+   Alle Kommentare sind auf Deutsch.
+   ============================================================ */
+
+/* ---------- Design-Variablen (einfach anzupassen) ---------- */
+:root{
+  --cc-gap: 16px;
+  --cc-radius: 8px;
+  --cc-border: #e5e7eb;
+  --cc-card-bg: #ffffff;
+  --cc-text: #0f172a;
+  --cc-muted: #6b7280;
+  --cc-primary: #2563eb;          /* Primärfarbe (Buttons/Highlights) */
+  --cc-primary-hover: #1e40af;    /* Hover-Farbe */
+  --cc-danger: #dc2626;           /* Gefahrenfarbe (Löschen) */
+  --cc-danger-hover: #b91c1c;
+  --cc-table-stripe: #f8fafc;
+  --cc-focus: 0 0 0 3px rgba(37,99,235,.25);
+}
+
+/* ============================================================
+   KATALOG (Kacheln)
+   ============================================================ */
+
+/* ► Basis + Fallback:
+   - nutzt CSS-Variable --cc-cols (wenn vorhanden)
+   - fällt auf 3 Spalten zurück, wenn keine Klasse/Variable gesetzt ist */
+.cc-grid{
+  display:grid;
+  gap:var(--cc-gap);
+  grid-template-columns: repeat(var(--cc-cols, 3), minmax(0,1fr)); /* Fallback = 3 */
+}
+
+/* ► Explizite Klassen überschreiben die Variable/Fallbacks */
+.cc-grid.cols-2{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+.cc-grid.cols-3{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+.cc-grid.cols-4{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+
+
+.cc-card{
+  background:var(--cc-card-bg);
+  border:1px solid var(--cc-border);
+  border-radius:var(--cc-radius);
+  padding:12px;
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+.cc-card:hover{ box-shadow:0 10px 30px rgba(0,0,0,.06); transform: translateY(-2px); }
+.cc-card img{ width:100%; height:auto; display:block; border-radius:calc(var(--cc-radius) - 2px); }
+.cc-card h3{ margin:8px 0 6px; font-size:16px; color:var(--cc-text); }
+
+.cc-pagination a, .cc-pagination span{
+  display:inline-block; padding:6px 10px; border:1px solid var(--cc-border);
+  border-radius:6px; margin-right:6px;
+}
+
+/* ============================================================
+   TABELLE auf der Artikelseite
+   ============================================================ */
+.wc-specs-table{ width:100%; border-collapse:collapse; margin:1rem 0; }
+.wc-specs-table th,.wc-specs-table td{
+  border:1px solid var(--cc-border); padding:.6rem .8rem; text-align:left;
+}
+.wc-specs-table thead th{ background:#f3f4f6; font-weight:600; }
+.wc-specs-table tbody tr:nth-child(even){ background:var(--cc-table-stripe); }
+
+/* ============================================================
+   EINZELANSICHT (Beschreibung, Tabelle, Aktionen)
+   ============================================================ */
+.cc-single-wrap{}
+.cc-single-desc{ margin:12px 0; line-height:1.6; color:var(--cc-text); }
+.cc-single-table{ margin:12px 0; }
+.cc-single-actions{ margin:12px 0; display:flex; gap:8px; flex-wrap:wrap; }
+
+/* ============================================================
+   MERKLISTE (mit Mengensteuerung)
+   ============================================================ */
+.cc-toolbar{ display:flex; gap:8px; margin:0 0 12px 0; flex-wrap:wrap; } /* Toolbar über der Liste (Reset/PDF) */
+
+.cc-wl{ display:grid; gap:16px; }
+.cc-wl-item{
+  border:1px solid var(--cc-border); padding:12px; border-radius:var(--cc-radius);
+  background:var(--cc-card-bg);
+}
+.cc-wl-top{ display:flex; align-items:center; gap:12px; }
+.cc-wl-top img{ width:80px; height:auto; border-radius:6px; }
+
+.cc-models{ margin-top:8px; border-collapse:collapse; width:100%; }
+.cc-models th,.cc-models td{
+  border:1px solid var(--cc-border); padding:6px 8px; font-size:13px; vertical-align:top;
+}
+
+.cc-qty{ display:flex; align-items:center; gap:6px; }
+.cc-qty input{ width:60px; text-align:center; }
+
+/* ► Spezielle Buttons in der Toolbar */
+#cc-reset.button{ background:#f3f4f6; border-color:#e5e7eb; color:#111; }
+#cc-reset.button:hover{ background:#e5e7eb; }
+
+/* ► Der PDF-Button */
+#cc-pdf.button{
+  background:var(--cc-primary); border-color:var(--cc-primary); color:#fff;
+}
+#cc-pdf.button:hover{ background:var(--cc-primary-hover); border-color:var(--cc-primary-hover); }
+
+/* ============================================================
+   FORMULARE: Neues Produkt & Produkt bearbeiten (ccf-*)
+   Beide Frontend-Seiten nutzen dieselben Klassen.
+   ============================================================ */
+.ccf-form{ max-width: 960px; margin: 0 auto; background:var(--cc-card-bg);
+  border:1px solid var(--cc-border); border-radius:var(--cc-radius); padding:16px; }
+.ccf-field{ margin-bottom:14px; }
+.ccf-field label{ display:block; font-weight:600; margin-bottom:6px; color:var(--cc-text); }
+.ccf-field input[type="text"],
+.ccf-field input[type="file"],
+.ccf-field textarea{
+  width:100%; border:1px solid var(--cc-border); border-radius:6px; padding:10px 12px;
+  background:#fff; color:var(--cc-text);
+}
+.ccf-field textarea{ min-height: 160px; line-height:1.5; }
+.ccf-field input:focus,
+.ccf-field textarea:focus{ outline:none; box-shadow: var(--cc-focus); border-color: var(--cc-primary); }
+
+/* ► Vorschaubild in der Bearbeitung */
+.ccf-thumb img{ border-radius:6px; border:1px solid var(--cc-border); }
+
+/* ► Aktionsreihe (Speichern/Löschen/Abbrechen) */
+.cc-actions-row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
+
+/* ============================================================
+   TABELLEN-GENERATOR (Builder) – Spalten/Zeilen/Tags/Vorschau
+   (wird in Neu/Bearbeiten verwendet; Klassen: .cc-builder, .cc-row, .cc-tags, .cc-tag)
+   ============================================================ */
+.cc-builder *{ box-sizing:border-box; }
+.cc-builder .cc-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+.cc-builder input[type=text]{ width:100%; border:1px solid var(--cc-border); border-radius:6px; padding:8px 10px; }
+.cc-builder input[type=text]:focus{ outline:none; box-shadow: var(--cc-focus); border-color: var(--cc-primary); }
+
+.cc-tags{ display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+.cc-tag{
+  background:#f1f5f9; border:1px solid #e2e8f0; padding:4px 8px; border-radius:999px;
+  font-size:12px; cursor:pointer;
+}
+.cc-tag:hover{ background:#e2e8f0; }
+
+.cc-table-preview{ border-collapse: collapse; width:100%; margin-top:10px; }
+.cc-table-preview th,.cc-table-preview td{ border:1px solid var(--cc-border); padding:6px 8px; }
+.cc-table-preview thead th{ background:#f3f4f6; }
+
+/* ============================================================
+   BUTTONS (Kompatibilität mit WP .button)
+   ============================================================ */
+/* Buttons nur innerhalb der Plugin-Oberflächen */
+.ccf-form .button,
+.cc-wl .button,
+.cc-archive-header .button,
+.cc-grid .button{
+  cursor:pointer;
+}
+.ccf-form .button:focus,
+.cc-wl .button:focus,
+.cc-archive-header .button:focus,
+.cc-grid .button:focus{
+  outline:none; box-shadow: var(--cc-focus);
+}
+.ccf-form .button.button-small,
+.cc-wl .button.button-small,
+.cc-archive-header .button.button-small,
+.cc-grid .button.button-small{
+  padding:4px 8px; font-size:12px; border-radius:8px;
+}
+.ccf-form .button.button-primary,
+.cc-wl .button.button-primary,
+.cc-archive-header .button.button-primary,
+.cc-grid .button.button-primary{
+  background:var(--cc-primary); border-color:var(--cc-primary); color:#fff;
+}
+.ccf-form .button.button-primary:hover,
+.cc-wl .button.button-primary:hover,
+.cc-archive-header .button.button-primary:hover,
+.cc-grid .button.button-primary:hover{
+  background:var(--cc-primary-hover); border-color:var(--cc-primary-hover);
+}
+
+
+/* ► Gefahren-Button (z. B. „Artikel löschen“ in cc-actions-row) */
+.cc-actions-row .button[name="cc_edit_action"][value="delete"]{
+  background: var(--cc-danger); border-color: var(--cc-danger); color:#fff;
+}
+.cc-actions-row .button[name="cc_edit_action"][value="delete"]:hover{
+  background: var(--cc-danger-hover); border-color: var(--cc-danger-hover);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 767px){
+  .cc-grid.cols-4{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .cc-grid.cols-3{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .ccf-form{ padding:14px; }
+}
+@media (max-width: 479px){
+  .cc-grid.cols-4, .cc-grid.cols-3{ grid-template-columns:repeat(1,minmax(0,1fr)); }
+}
+/* ============================================================
+   GALERIE unter der Tabelle auf der Produktseite
+   ============================================================ */
+.cc-gallery{ margin: 16px 0; }
+.cc-gallery-title{
+  font-size: 16px; font-weight: 600; margin: 0 0 8px 0; color: var(--cc-text);
+}
+.cc-gallery-strip{
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;
+  scroll-snap-type: x mandatory;
+}
+.cc-gallery-item{ scroll-snap-align: start; flex: 0 0 auto; }
+.cc-gallery-item img{
+  width: 96px; height: 96px; object-fit: cover;
+  border: 1px solid var(--cc-border); border-radius: 6px; display: block;
+}
+.cc-gallery-strip::-webkit-scrollbar{ height: 8px; }
+.cc-gallery-strip::-webkit-scrollbar-thumb{ background: #cbd5e1; border-radius: 8px; }
+@media (min-width: 1024px){
+  .cc-gallery-item img{ width: 120px; height: 120px; }
+}
+
+/* ============================================================
+   GALERIE-VERWALTUNG im Formular (Bearbeiten)
+   ============================================================ */
+.ccf-gallery-manage{
+  display: grid; grid-template-columns: repeat( auto-fill, minmax(90px, 1fr) );
+  gap: 10px;
+}
+.ccf-g-item{
+  display: block; border: 1px solid var(--cc-border); border-radius: 8px; padding: 6px; text-align: center;
+  background: var(--cc-card-bg);
+}
+.ccf-g-item img{
+  width: 100%; height: 80px; object-fit: cover; border-radius: 6px; display: block; margin-bottom: 6px;
+}
+.ccf-g-actions{ display: flex; justify-content: center; gap: 6px; align-items: center; font-size: 12px; }
+/* ============================================================
+   LIGHTBOX für die Galerie (zentriert, 50vw, Pfeile, Close)
+   ============================================================ */
+.cc-lightbox{
+  position: fixed; inset: 0; z-index: 9999;
+  display: none; align-items: center; justify-content: center;
+}
+.cc-lightbox.is-open{ display: flex; }
+.cc-lb-backdrop{
+  position: absolute; inset: 0; background: rgba(0,0,0,.7);
+}
+.cc-lb-image{
+  position: relative; z-index: 1; width: 50vw; height: auto; max-height: 90vh;
+  border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.4);
+}
+/* Pfeile */
+.cc-lb-prev, .cc-lb-next{
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 2; width: 44px; height: 44px; border-radius: 999px;
+  background: rgba(255,255,255,.95); border:1px solid #e5e7eb;
+  font-size: 24px; line-height: 42px; text-align: center; cursor: pointer;
+}
+.cc-lb-prev{ left: 24px; }
+.cc-lb-next{ right: 24px; }
+.cc-lb-prev:hover, .cc-lb-next:hover{ background: #ffffff; }
+@media (max-width: 767px){
+  .cc-lb-image{ width: 90vw; } /* auf Mobil größer */
+  .cc-lb-prev, .cc-lb-next{ width: 40px; height: 40px; line-height: 38px; }
+}
+/* ============================================================
+   KATEGORIEN – Grid & Karten (ähnlich wie Produkte)
+   ============================================================ */
+.cc-cat-grid.cc-grid{ /* nutzt vorhandenes Grid */ }
+.cc-cat-card .cc-cat-title{ margin: 8px 0 2px; font-size: 16px; color: var(--cc-text); }
+.cc-cat-card .cc-cat-count{ font-size: 12px; color: var(--cc-muted); }
+.cc-cat-card img{ width:100%; height:auto; display:block; border-radius: calc(var(--cc-radius) - 2px); }
+
+/* Archivkopf */
+.cc-archive-header{ margin: 0 0 16px 0; }
+.cc-archive-title{ font-size: 24px; margin: 0 0 6px 0; }
+.cc-archive-desc{ color: var(--cc-muted); }
+
+/* ============================================================
+   Merkliste – Gruppierung nach Kategorien
+   ============================================================ */
+.cc-wl-group{ margin: 18px 0; }
+.cc-wl-group-title{ font-size: 18px; font-weight: 600; margin: 0 0 10px 0; }
+.cc-wl-group-inner{ display: grid; gap: 16px; }
+
+/* ============================================================
+   Dropdown „Katalog“ mit Kategorien (Hover)
+   ============================================================ */
+.cc-cat-dd{ position: relative; display:inline-block; }
+.cc-cat-dd__toggle{ display:inline-block; padding: 8px 10px; }
+.cc-cat-dd__menu{
+  position:absolute; left:0; top:100%;
+  min-width: 220px; background:#fff; border:1px solid var(--cc-border); border-radius:8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  padding: 8px; margin: 6px 0 0 0; list-style:none;
+  display:none; z-index: 999;
+}
+.cc-cat-dd:hover .cc-cat-dd__menu{ display:block; }
+.cc-cat-dd__menu li a{
+  display:block; padding:8px 10px; border-radius:6px; color: var(--cc-text);
+}
+.cc-cat-dd__menu li a:hover{ background:#f3f4f6; }
+/* ============================================================
+   Formulare: Select-Element wie Inputs stylen (Deutsch)
+   ============================================================ */
+.ccf-field select{
+  width:100%;
+  border:1px solid var(--cc-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background:#fff;
+  color: var(--cc-text);
+}
+.ccf-field select:focus{
+  outline:none; box-shadow: var(--cc-focus); border-color: var(--cc-primary);
+}
+/* ============================================================
+   Kompakte Produktkarten (wie Kategorie-Kacheln)
+   ============================================================ */
+.cc-card--compact{
+  padding: 10px;                      /* weniger Innenabstand */
+}
+.cc-card--compact img{
+  width: 100%;
+  height: 140px;                      /* feste Höhe */
+  object-fit: cover;                  /* sauberer Zuschnitt */
+  border-radius: calc(var(--cc-radius) - 2px);
+  display: block;
+}
+.cc-card--compact h3{
+  font-size: 16px;                    /* etwas kleiner */
+  margin: 8px 0 0;
+}
+@media (min-width: 1024px){
+  .cc-card--compact img{ height: 160px; }
+}
+/* Deutsch: Bearbeiten-Button nur innerhalb des Kategorie-Headers anzeigen */
+                    /* скрыть везде по умолчанию */
+.cc-archive-header .cc-cat-edit-btn{ display: inline-flex; } /* показывать только внутри заголовка категории */
+/* Deutsch: Stil des "Kategorie bearbeiten" Buttons im Archiv */
+.cc-cat-edit-btn{
+  background: var(--cc-primary);
+  border-color: var(--cc-primary);
+  color:#fff;
+}
+.cc-cat-edit-btn:hover{
+  background: var(--cc-primary-hover);
+  border-color: var(--cc-primary-hover);
+}
+/* Fallback: Kompakte Karten erzwungen auf Kategorieseiten */
+.tax-catalog_category .cc-card{ padding:10px; }
+.tax-catalog_category .cc-card img{ height:160px; object-fit:cover; }
+.tax-catalog_category .cc-card h3{ font-size:16px; margin:8px 0 0; }
+@media (min-width: 1024px){
+  .tax-catalog_category .cc-card img{ height:180px; }
+}
+
