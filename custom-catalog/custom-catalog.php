@@ -16,7 +16,7 @@ if ( ! class_exists('\Dompdf\Dompdf') ) {
     }
 }
 
-
+/* Neue Kommentare*/
 /* ========== CPT: catalog_item ========== */
 add_action('init', function () {
     register_post_type('catalog_item', [
