@@ -695,42 +695,7 @@ add_shortcode('catalog_categories', function($atts){
     return ob_get_clean();
 });
 
-/* [catalog_grid per_page="18" columns="3"] — Kachel-Grid mit Pagination (ohne Merkliste-Button) */
-add_shortcode('catalog_grid', function($atts){
-    $a = shortcode_atts(['per_page'=>18,'columns'=>3], $atts, 'catalog_grid');
-    $per_page = max(1, intval($a['per_page']));
-    $cols = max(1, intval($a['columns']));
 
-    $paged = max(1, get_query_var('paged') ?: get_query_var('page') ?: 1);
-    $q = new WP_Query([
-        'post_type'      => 'catalog_item',
-        'posts_per_page' => $per_page,
-        'paged'          => $paged,
-    ]);
-
-    ob_start();
-    ?>
-    <div class="cc-grid cols-<?php echo intval($cols); ?>" id="cc-grid" style="--cc-cols: <?php echo intval($cols); ?>;">
-      <?php if ($q->have_posts()): while($q->have_posts()): $q->the_post(); ?>
-        <article class="cc-card">
-          <a href="<?php the_permalink(); ?>">
-            <?php if (has_post_thumbnail()) the_post_thumbnail('medium'); ?>
-            <h3><?php the_title(); ?></h3>
-          </a>
-        </article>
-      <?php endwhile; endif; wp_reset_postdata(); ?>
-    </div>
-    <div class="cc-pagination">
-        <?php
-          echo paginate_links([
-              'total'   => $q->max_num_pages,
-              'current' => $paged
-          ]);
-        ?>
-    </div>
-    <?php
-    return ob_get_clean();
-});
 
 
 /* [catalog_specs_table] — Tabelle mit per-Modell „+1 zur Merkliste“ (mit Auto-Reset nach 2s) */
@@ -853,12 +818,6 @@ add_shortcode('catalog_add_to_list', function(){
 });
 
 
-/* -----------------------------------------------------------
-   Button "Kategorie bearbeiten" nur auf Kategorieseiten (FSE-freundlich)
-   - injiziert den Button direkt VOR den Query-Loop der Seite
-   - keine Ausgabe im Header/Footer, nur im Inhaltsbereich
-   ----------------------------------------------------------- */
-
 
 /* -----------------------------------------------------------
    Eigenes Template für Kategorie-Archiv (klassische Themes)
@@ -890,7 +849,7 @@ add_filter('the_content', function($content){
         $full_img_url = get_the_post_thumbnail_url($pid, 'full');
         if ($full_img_url) {
             $image_html = '<div class="cc-single-fullimg" style="text-align:center;margin-bottom:1.5rem;">'
-                        . '<img src="'.esc_url($full_img_url).'" alt="" style="max-width:100%;height:auto;">'
+                        . '<img class="cc-single-image" src="'.esc_url($full_img_url).'" >'
                         . '</div>';
         }
 
@@ -977,60 +936,6 @@ add_filter('the_content', function($content){
 });
 
 
-/* -----------------------------------------------------------
-   [catalog_category_loop] – Inhalt der Kategorieseite (FSE)
-   ----------------------------------------------------------- */
-add_shortcode('catalog_category_loop', function(){
-    if ( ! is_tax('catalog_category') ) return '';
-
-    $term = get_queried_object();
-    $term_id = (int)($term->term_id ?? 0);
-
-    ob_start(); ?>
-    <header class="cc-archive-header">
-      <h1 class="cc-archive-title"><?php echo esc_html($term->name ?? 'Kategorie'); ?></h1>
-      <?php if (!empty($term->description)): ?>
-        <div class="cc-archive-desc"><?php echo wp_kses_post(wpautop($term->description)); ?></div>
-      <?php endif; ?>
-
-      <?php if ( current_user_can('manage_categories') && $term_id ): ?>
-        <div class="cc-archive-actions" style="margin-top:8px;">
-          <a class="button button-small cc-cat-edit-btn"
-             href="<?php echo esc_url( add_query_arg('id', $term_id, home_url('/kategorie-bearbeiten/')) ); ?>">
-            Bearbeiten
-          </a>
-        </div>
-      <?php endif; ?>
-    </header>
-    <?php
-    // Produkte dieser Kategorie (kompakte Karten)
-    $q = new WP_Query([
-      'post_type'      => 'catalog_item',
-      'tax_query'      => [[ 'taxonomy'=>'catalog_category','field'=>'term_id','terms'=>$term_id ]],
-      'orderby'        => 'title',
-      'order'          => 'ASC',
-      'posts_per_page' => 18,
-      'paged'          => max(1,(int)get_query_var('paged')),
-    ]);
-
-    echo '<div class="cc-grid cols-3">';
-    if ($q->have_posts()){
-      while($q->have_posts()){ $q->the_post(); ?>
-        <article class="cc-card cc-card--compact">
-          <a href="<?php the_permalink(); ?>">
-            <?php if (has_post_thumbnail()) the_post_thumbnail('medium'); ?>
-            <h3><?php the_title(); ?></h3>
-          </a>
-        </article>
-      <?php }
-    } else {
-      echo '<p>Keine Artikel in dieser Kategorie.</p>';
-    }
-    echo '</div>';
-
-    wp_reset_postdata();
-    return ob_get_clean();
-});
 
 
 
@@ -1038,7 +943,7 @@ add_shortcode('catalog_category_loop', function(){
 /* [catalog_wishlist] — Merkliste mit Mengen pro Modell + PDF-Export */
 add_shortcode('catalog_wishlist', function(){
     $ajax = admin_url('admin-ajax.php');
-    ob_start(); ?>
+    ob_start(); ?>  
     <div class="cc-toolbar">
       <button type="button" class="button button-small" id="cc-reset">Merkliste zurücksetzen</button>
       <button type="button" class="button button-small button-primary" id="cc-pdf">PDF herunterladen</button>

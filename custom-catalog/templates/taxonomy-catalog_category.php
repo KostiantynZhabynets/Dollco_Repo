@@ -35,7 +35,6 @@ $term_id = isset($term->term_id) ? (int)$term->term_id : 0;
     'posts_per_page' => 18,
     'paged'          => max(1, (int) get_query_var('paged')),
   ]);
-
   echo '<div class="cc-grid cols-3">';
   if ($q->have_posts()):
     while ($q->have_posts()): $q->the_post(); ?>
