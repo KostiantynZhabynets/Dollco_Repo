@@ -1313,13 +1313,12 @@ add_shortcode('catalog_new_item', function () {
         ]);
       ?>
       <div class="ccf-field">
-        <label for="cc_item_categories">Kategorie(n)</label>
-        <select id="cc_item_categories" name="cc_item_categories[]" multiple>
+        <label for="cc_item_categories">Kategorie</label>
+        <select id="cc_item_categories" name="cc_item_categories[]">
           <?php foreach($cc_all_terms as $t): ?>
             <option value="<?php echo esc_attr($t->term_id); ?>"><?php echo esc_html($t->name); ?></option>
           <?php endforeach; ?>
         </select>
-        <small class="cc-muted">Mehrfachauswahl möglich (Strg/Cmd gedrückt halten).</small>
       </div>
 
       <div class="ccf-field">
@@ -1334,21 +1333,34 @@ add_shortcode('catalog_new_item', function () {
           <h4>Spalten (Attribute)</h4>
           <div class="cc-tags" id="ccf-columns-tags"></div>
           <div class="cc-row">
-            <input type="text" id="ccf-new-col" placeholder="z. B. Größe, Gewicht, Material …">
+            <input type="text" id="ccf-new-col" placeholder="z. B. Größe, Gewicht, Material …" >
             <button type="button" class="button" id="ccf-add-col">+ Spalte hinzufügen</button>
-            <button type="button" class="button" id="ccf-clear-cols">Leeren</button>
+            <script>
+              const input = document.getElementById('ccf-new-col');
+              const button = document.getElementById('ccf-add-col');
+
+              input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();      // чтобы не было лишнего сабмита
+                  button.click();          // вызываем клик по кнопке
+                }
+              });
+            </script>
+            <button type="button" class="button" id="ccf-clear-cols">Alle Spalten leeren</button>
           </div>
 
           <h4>Zeilen (Modelle)</h4>
           <div id="ccf-rows"></div>
           <div class="cc-row">
-            <input type="text" id="ccf-new-row-name" placeholder="Modellname (z. B. Modell A)">
+            <input type="hidden" id="ccf-new-row-name" placeholder="Modellname (z. B. Modell A)">
             <button type="button" class="button" id="ccf-add-row">+ Modell hinzufügen</button>
             <button type="button" class="button" id="ccf-clear-rows">Alle Modelle leeren</button>
           </div>
 
           <h4>Vorschau</h4>
+          <div class="cc-table-preview-head">
           <table class="cc-table-preview" id="ccf-preview"></table>
+          </div>
           <p><em>Die Tabelle wird strukturiert gespeichert und automatisch in der Artikelseite angezeigt.</em></p>
         </div>
       </div>
@@ -1394,18 +1406,22 @@ add_shortcode('catalog_new_item', function () {
         while (r.values.length < state.columns.length) r.values.push('');
         if (r.values.length > state.columns.length) r.values = r.values.slice(0, state.columns.length);
       }
+     
       function renderRows(){
         $rows.innerHTML = '';
         state.rows.forEach((r, idx)=>{
           ensureRowCellsLen(r);
           const wrap = document.createElement('div'); wrap.className='cc-row';
-          const name = document.createElement('input'); name.type='text'; name.value=r.model||''; name.placeholder='Modellname';
-          name.addEventListener('input', e=>{ r.model=e.target.value; saveToHidden(); });
-          wrap.appendChild(name);
 
           const del = document.createElement('button'); del.type='button'; del.className='button'; del.textContent='Löschen';
           del.addEventListener('click', ()=>{ state.rows.splice(idx,1); renderAll(); });
           wrap.appendChild(del);
+
+          const name = document.createElement('input'); name.type='text';  name.className='cc-model-name-input'; name.value=r.model||''; name.placeholder='Modellname';
+          name.addEventListener('input', e=>{ r.model=e.target.value; saveToHidden(); });
+          wrap.appendChild(name);
+
+         
 
           const cellsBox = document.createElement('div');
           cellsBox.style.display='grid'; cellsBox.style.gridTemplateColumns=`repeat(${Math.max(1,state.columns.length)}, minmax(120px,1fr))`; cellsBox.style.gap='6px';
@@ -1421,16 +1437,20 @@ add_shortcode('catalog_new_item', function () {
       }
       function renderPreview(){
         const cols=state.columns; let html='';
+        
         html+='<thead><tr><th>Modell</th>'+cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>';
         state.rows.forEach(r=>{
           html+='<tr><td>'+esc(r.model||'')+'</td>';
           cols.forEach((c,ci)=> html+='<td>'+esc(r.values?.[ci]||'')+'</td>');
           html+='</tr>';
         });
-        html+='</tbody>'; $preview.innerHTML = html;
+        html+='</tbody>'; 
+       
+        $preview.innerHTML = html;
+
       }
       function esc(s){ return (s||'').toString().replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
-      function renderAll(){ renderColumns(); renderRows(); renderPreview(); }
+      function renderAll(){ renderColumns(); renderRows();  renderPreview(); }
 
       document.getElementById('ccf-add-col').addEventListener('click', ()=>{
         const val = ($newCol.value||'').trim();
@@ -1689,8 +1709,8 @@ add_shortcode('catalog_edit_item', function($atts){
         if (is_wp_error($cc_curr_terms)) $cc_curr_terms = [];
       ?>
       <div class="ccf-field">
-        <label for="cc_item_categories">Kategorie(n)</label>
-        <select id="cc_item_categories" name="cc_item_categories[]" multiple>
+        <label for="cc_item_categories">Kategorie</label>
+        <select id="cc_item_categories" name="cc_item_categories[]">
           <?php foreach($cc_all_terms as $t): ?>
             <option value="<?php echo esc_attr($t->term_id); ?>"
                     <?php selected(in_array($t->term_id, $cc_curr_terms, true)); ?>>
@@ -1698,7 +1718,7 @@ add_shortcode('catalog_edit_item', function($atts){
             </option>
           <?php endforeach; ?>
         </select>
-        <small class="cc-muted">Mehrfachauswahl möglich (Strg/Cmd gedrückt halten).</small>
+        
       </div>
 
       <div class="ccf-field">
@@ -1719,19 +1739,32 @@ add_shortcode('catalog_edit_item', function($atts){
           <div class="cc-row">
             <input type="text" id="ccf-new-col" placeholder="z. B. Größe, Gewicht, Material …">
             <button type="button" class="button" id="ccf-add-col">+ Spalte hinzufügen</button>
-            <button type="button" class="button" id="ccf-clear-cols">Leeren</button>
+            <script>
+              const input = document.getElementById('ccf-new-col');
+              const button = document.getElementById('ccf-add-col');
+
+              input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();      // чтобы не было лишнего сабмита
+                  button.click();          // вызываем клик по кнопке
+                }
+              });
+            </script>
+            <button type="button" class="button" id="ccf-clear-cols">Alle Spalten leeren</button>
           </div>
 
           <h4>Zeilen (Modelle)</h4>
           <div id="ccf-rows"></div>
           <div class="cc-row">
-            <input type="text" id="ccf-new-row-name" placeholder="Modellname (z. B. Modell A)">
+            <input type="hidden" id="ccf-new-row-name" placeholder="Modellname (z. B. Modell A)">
             <button type="button" class="button" id="ccf-add-row">+ Modell hinzufügen</button>
             <button type="button" class="button" id="ccf-clear-rows">Alle Modelle leeren</button>
           </div>
 
           <h4>Vorschau</h4>
+          <div class="cc-table-preview-head">
           <table class="cc-table-preview" id="ccf-preview"></table>
+          </div>
         </div>
       </div>
                     <?php
@@ -1815,13 +1848,14 @@ add_shortcode('catalog_edit_item', function($atts){
         state.rows.forEach((r, idx)=>{
           ensureRowCellsLen(r);
           const wrap = document.createElement('div'); wrap.className='cc-row';
-          const name = document.createElement('input'); name.type='text'; name.value=r.model||''; name.placeholder='Modellname';
-          name.addEventListener('input', e=>{ r.model=e.target.value; saveToHidden(); });
-          wrap.appendChild(name);
 
           const del = document.createElement('button'); del.type='button'; del.className='button'; del.textContent='Löschen';
           del.addEventListener('click', ()=>{ state.rows.splice(idx,1); renderAll(); });
           wrap.appendChild(del);
+
+          const name = document.createElement('input'); name.type='text'; name.className='cc-model-name-input'; name.value=r.model||''; name.placeholder='Modellname'; 
+          name.addEventListener('input', e=>{ r.model=e.target.value; saveToHidden(); });
+          wrap.appendChild(name);
 
           const cellsBox = document.createElement('div');
           cellsBox.style.display='grid'; cellsBox.style.gridTemplateColumns=`repeat(${Math.max(1,state.columns.length)}, minmax(120px,1fr))`; cellsBox.style.gap='6px';
@@ -1835,18 +1869,22 @@ add_shortcode('catalog_edit_item', function($atts){
         });
         saveToHidden();
       }
+      
       function renderPreview(){
         const cols=state.columns; let html='';
+        
         html+='<thead><tr><th>Modell</th>'+cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr></thead><tbody>';
         state.rows.forEach(r=>{
           html+='<tr><td>'+esc(r.model||'')+'</td>';
           cols.forEach((c,ci)=> html+='<td>'+esc(r.values?.[ci]||'')+'</td>');
           html+='</tr>';
         });
-        html+='</tbody>'; $preview.innerHTML = html;
+        html+='</tbody>'; 
+      
+        $preview.innerHTML = html;
       }
       function esc(s){ return (s||'').toString().replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
-      function renderAll(){ renderColumns(); renderRows(); renderPreview(); }
+      function renderAll(){ renderColumns(); renderRows();renderPreview(); }
 
       document.getElementById('ccf-add-col').addEventListener('click', ()=>{
         const val = ($newCol.value||'').trim();
